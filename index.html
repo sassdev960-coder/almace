@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Móvil - Neve Express</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #111827;
+            --bg-card: #1f2937;
+            --bg-input: #374151;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --primary: #6366f1;
+            --primary-active: #818cf8;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --border: #374151;
+            --radius: 12px;
+            --nav-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            text-align: left;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--bg-card);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: calc(var(--nav-height) + 20px);
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .view.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-active);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 10px 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: auto;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        .btn-success {
+            background-color: var(--success);
+        }
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th, td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        tbody tr:active {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+        }
+        .badge-success { background-color: var(--success); }
+        .badge-warning { background-color: var(--warning); }
+        .badge-danger { background-color: var(--danger); }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-active);
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .fila-ingrediente, .fila-presentacion {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .fila-ingrediente select, .fila-ingrediente input,
+        .fila-presentacion input {
+            margin-bottom: 0;
+            flex: 1;
+        }
+        .fila-ingrediente button, .fila-presentacion button {
+            flex-shrink: 0;
+            width: 36px;
+            padding: 8px;
+        }
+
+        .bottom-nav {
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            height: var(--nav-height);
+            flex-shrink: 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            gap: 2px;
+            font-size: 0.6rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-item.active {
+            color: var(--primary-active);
+        }
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            width: 92%;
+            max-width: 500px;
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border);
+            max-height: 85vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .close-modal {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <span class="header-title" id="header-title">Dashboard</span>
+        <button class="btn-logout" onclick="logout()">Salir</button>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-content" id="main-content">
+        <!-- Dashboard -->
+        <section id="view-dashboard" class="view active">
+            <div class="grid-4">
+                <div class="stat-card">
+                    <div class="stat-value" id="dash-insumos">0</div>
+                    <div class="stat-label">Insumos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="dash-formulas">0</div>
+                    <div class="stat-label">Fórmulas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="dash-lotes">0</div>
+                    <div class="stat-label">Lotes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="dash-deptos">0</div>
+                    <div class="stat-label">Deptos</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">Últimos Lotes</div>
+                <table>
+                    <thead><tr><th>ID</th><th>Producto</th><th>Estado</th></tr></thead>
+                    <tbody id="dash-ultimos-lotes"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Inventario -->
+        <section id="view-inventario" class="view">
+            <div class="card">
+                <div class="card-title">
+                    <span>Inventario</span>
+                    <button class="btn-sm" onclick="abrirModalInsumo()">+ Nuevo</button>
+                </div>
+                <table>
+                    <thead><tr><th>Nombre</th><th>Cant.</th><th>Und.</th><th>Acciones</th></tr></thead>
+                    <tbody id="tabla-inventario"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Fórmulas -->
+        <section id="view-formulas" class="view">
+            <div class="card">
+                <div class="card-title">
+                    <span>Fórmulas</span>
+                    <button class="btn-sm" onclick="abrirModalFormula()">+ Nueva</button>
+                </div>
+                <table>
+                    <thead><tr><th>Nombre</th><th>Bolas/Band.</th><th>Acciones</th></tr></thead>
+                    <tbody id="tabla-formulas"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Departamentos -->
+        <section id="view-departamentos" class="view">
+            <div class="card">
+                <div class="card-title">
+                    <span>Departamentos</span>
+                    <button class="btn-sm" onclick="abrirModalDepartamento()">+ Nuevo</button>
+                </div>
+                <table>
+                    <thead><tr><th>Nombre</th><th>Slug</th><th>Acciones</th></tr></thead>
+                    <tbody id="tabla-departamentos"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Producción -->
+        <section id="view-produccion" class="view">
+            <div class="card">
+                <div class="card-title">Nueva Producción</div>
+                <label>Fórmula</label>
+                <select id="prod-formula" onchange="actualizarResumenProd()"></select>
+                <label>Cantidad de Lotes</label>
+                <input type="number" id="prod-cantidad-lotes" min="1" value="1" onchange="actualizarResumenProd()">
+                <label>Departamento</label>
+                <select id="prod-departamento"></select>
+                <label>Presentación</label>
+                <select id="prod-presentacion"></select>
+                <div id="prod-resumen" style="background:var(--bg-base); padding:12px; border-radius:8px; margin:12px 0; display:none;"></div>
+                <button class="btn-block" onclick="ejecutarProduccion()">Procesar y Enviar</button>
+            </div>
+        </section>
+
+        <!-- Almacén / Lotes -->
+        <section id="view-almacen" class="view">
+            <div class="card">
+                <div class="card-title">Lotes</div>
+                <table>
+                    <thead><tr><th>ID</th><th>Producto</th><th>Estado</th><th>Acción</th></tr></thead>
+                    <tbody id="tabla-lotes"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Inicio</span>
+        </div>
+        <div class="nav-item" data-view="inventario" onclick="switchView('inventario')">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            <span>Inventario</span>
+        </div>
+        <div class="nav-item" data-view="formulas" onclick="switchView('formulas')">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>Fórmulas</span>
+        </div>
+        <div class="nav-item" data-view="departamentos" onclick="switchView('departamentos')">
+            <svg viewBox="0 0 24 24"><path d="M3 21h18"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path><path d="M9 7h6"></path><path d="M9 12h6"></path><path d="M9 17h6"></path></svg>
+            <span>Deptos</span>
+        </div>
+        <div class="nav-item" data-view="produccion" onclick="switchView('produccion')">
+            <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <span>Producir</span>
+        </div>
+        <div class="nav-item" data-view="almacen" onclick="switchView('almacen')">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Almacén</span>
+        </div>
+    </nav>
+
+    <!-- Modales -->
+    <div class="modal-overlay" id="modal-insumo">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modal-insumo-titulo">Agregar Insumo</span>
+                <button class="close-modal" onclick="cerrarModal('modal-insumo')">×</button>
+            </div>
+            <input type="hidden" id="insumo-id">
+            <label>Nombre</label>
+            <input type="text" id="insumo-nombre">
+            <label>Cantidad</label>
+            <input type="number" id="insumo-cantidad" step="0.01">
+            <label>Unidad</label>
+            <select id="insumo-unidad">
+                <option value="kg">kg</option>
+                <option value="L">L</option>
+                <option value="uds">uds</option>
+                <option value="g">g</option>
+            </select>
+            <label>Costo Unitario (Bs.)</label>
+            <input type="number" id="insumo-costo" step="0.01">
+            <button class="btn-block" onclick="guardarInsumo()">Guardar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-formula">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modal-formula-titulo">Nueva Fórmula</span>
+                <button class="close-modal" onclick="cerrarModal('modal-formula')">×</button>
+            </div>
+            <input type="hidden" id="formula-id">
+            <label>Nombre del Producto</label>
+            <input type="text" id="formula-nombre">
+            <div class="grid-2">
+                <div>
+                    <label>Bolas por bandeja</label>
+                    <input type="number" id="formula-bolas" min="1">
+                </div>
+                <div>
+                    <label>Bandejas por lote</label>
+                    <input type="number" id="formula-bandejas" min="1">
+                </div>
+            </div>
+            <label style="margin-top:10px;">Ingredientes (cantidad por bandeja)</label>
+            <div id="formula-ingredientes"></div>
+            <button class="btn-sm btn-outline" onclick="agregarFilaIngrediente()">+ Agregar ingrediente</button>
+            <label style="margin-top:16px;">Presentaciones</label>
+            <div id="formula-presentaciones"></div>
+            <button class="btn-sm btn-outline" onclick="agregarFilaPresentacion()">+ Agregar presentación</button>
+            <button class="btn-block" style="margin-top:20px;" onclick="guardarFormula()">Guardar Fórmula</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-departamento">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modal-departamento-titulo">Agregar Departamento</span>
+                <button class="close-modal" onclick="cerrarModal('modal-departamento')">×</button>
+            </div>
+            <input type="hidden" id="departamento-id">
+            <label>Nombre</label>
+            <input type="text" id="departamento-nombre">
+            <label>Slug (para link)</label>
+            <input type="text" id="departamento-slug">
+            <button class="btn-block" onclick="guardarDepartamento()">Guardar</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ========== CONFIGURACIÓN DE SUPABASE (NUEVAS CREDENCIALES) ==========
+        const SUPABASE_URL = 'https://cjcpsgfuqifyudtqvggo.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqY3BzZ2Z1cWlmeXVkdHF2Z2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTYyNDEsImV4cCI6MjA5NDc5MjI0MX0.EoJeeiunzY0aisKLyBHalpYzSoXG4TEJeYEFBitAzgM';
+        // Cambiamos el nombre de la variable para evitar conflicto con la global
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ========== ESTADO GLOBAL ==========
+        let inventarioCache = [];
+        let formulasCache = [];
+        let departamentosCache = [];
+        let lotesCache = [];
+
+        // ========== AUTENTICACIÓN SIMULADA ==========
+        function verificarLogin() {
+            const auth = localStorage.getItem('admin_auth');
+            if (!auth) {
+                const pass = prompt('Ingrese la contraseña de administrador:');
+                if (pass === 'admin123') {
+                    localStorage.setItem('admin_auth', 'true');
+                } else {
+                    alert('Contraseña incorrecta');
+                    window.location.href = 'about:blank';
+                }
+            }
+        }
+        function logout() {
+            localStorage.removeItem('admin_auth');
+            window.location.reload();
+        }
+
+        // ========== NAVEGACIÓN ==========
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + viewName).classList.add('active');
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`.bottom-nav .nav-item[data-view="${viewName}"]`).classList.add('active');
+            const titulos = {
+                dashboard: 'Dashboard',
+                inventario: 'Inventario',
+                formulas: 'Fórmulas',
+                departamentos: 'Departamentos',
+                produccion: 'Producción',
+                almacen: 'Almacén'
+            };
+            document.getElementById('header-title').innerText = titulos[viewName] || 'Admin';
+            if (viewName === 'dashboard') cargarDashboard();
+            if (viewName === 'inventario') cargarInventario();
+            if (viewName === 'formulas') cargarFormulas();
+            if (viewName === 'departamentos') cargarDepartamentos();
+            if (viewName === 'produccion') cargarProduccion();
+            if (viewName === 'almacen') cargarLotes();
+        }
+
+        // ========== INICIALIZACIÓN ==========
+        async function init() {
+            verificarLogin();
+            await cargarTodo();
+            cargarDashboard();
+        }
+
+        async function cargarTodo() {
+            try {
+                const [invRes, formRes, depRes, lotRes] = await Promise.all([
+                    supabaseClient.from('inventario').select('*'),
+                    supabaseClient.from('formulas').select('*'),
+                    supabaseClient.from('departamentos').select('*'),
+                    supabaseClient.from('lotes').select('*').order('created_at', { ascending: false })
+                ]);
+                if (invRes.data) inventarioCache = invRes.data;
+                if (formRes.data) formulasCache = formRes.data;
+                if (depRes.data) departamentosCache = depRes.data;
+                if (lotRes.data) lotesCache = lotRes.data;
+            } catch (e) {
+                console.error('Error cargando datos:', e);
+                alert('No se pudieron cargar los datos. Verifica tu conexión y que las tablas existan.');
+            }
+        }
+
+        // ========== DASHBOARD ==========
+        function cargarDashboard() {
+            document.getElementById('dash-insumos').innerText = inventarioCache.length;
+            document.getElementById('dash-formulas').innerText = formulasCache.length;
+            document.getElementById('dash-lotes').innerText = lotesCache.length;
+            document.getElementById('dash-deptos').innerText = departamentosCache.length;
+            const tbody = document.getElementById('dash-ultimos-lotes');
+            tbody.innerHTML = '';
+            lotesCache.slice(0, 5).forEach(lote => {
+                const estado = lote.estado === 'almacen2' ? '✅' : '⏳';
+                tbody.innerHTML += `<tr><td>${lote.id}</td><td>${lote.producto}</td><td>${estado}</td></tr>`;
+            });
+        }
+
+        // ========== INVENTARIO ==========
+        function cargarInventario() {
+            const tbody = document.getElementById('tabla-inventario');
+            tbody.innerHTML = '';
+            inventarioCache.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.nombre}</td>
+                        <td>${item.cantidad}</td>
+                        <td>${item.unidad}</td>
+                        <td>
+                            <button class="btn-sm" onclick="editarInsumo('${item.id}')">Editar</button>
+                            <button class="btn-sm btn-danger" onclick="eliminarInsumo('${item.id}')">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function abrirModalInsumo() {
+            document.getElementById('modal-insumo-titulo').innerText = 'Agregar Insumo';
+            document.getElementById('insumo-id').value = '';
+            document.getElementById('insumo-nombre').value = '';
+            document.getElementById('insumo-cantidad').value = '';
+            document.getElementById('insumo-costo').value = '';
+            document.getElementById('modal-insumo').classList.add('active');
+        }
+
+        function editarInsumo(id) {
+            const item = inventarioCache.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('modal-insumo-titulo').innerText = 'Editar Insumo';
+            document.getElementById('insumo-id').value = item.id;
+            document.getElementById('insumo-nombre').value = item.nombre;
+            document.getElementById('insumo-cantidad').value = item.cantidad;
+            document.getElementById('insumo-unidad').value = item.unidad;
+            document.getElementById('insumo-costo').value = item.costo_unitario;
+            document.getElementById('modal-insumo').classList.add('active');
+        }
+
+        async function guardarInsumo() {
+            const id = document.getElementById('insumo-id').value || document.getElementById('insumo-nombre').value.toLowerCase().replace(/ /g, '_');
+            const nombre = document.getElementById('insumo-nombre').value;
+            const cantidad = parseFloat(document.getElementById('insumo-cantidad').value) || 0;
+            const unidad = document.getElementById('insumo-unidad').value;
+            const costo = parseFloat(document.getElementById('insumo-costo').value) || 0;
+            const payload = { id, nombre, cantidad, unidad, costo_unitario: costo };
+            const { error } = await supabaseClient.from('inventario').upsert(payload);
+            if (error) { alert('Error: ' + error.message); return; }
+            cerrarModal('modal-insumo');
+            await cargarTodo();
+            cargarInventario();
+        }
+
+        async function eliminarInsumo(id) {
+            if (!confirm('¿Eliminar este insumo?')) return;
+            const { error } = await supabaseClient.from('inventario').delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            await cargarTodo();
+            cargarInventario();
+        }
+
+        // ========== FÓRMULAS ==========
+        function cargarFormulas() {
+            const tbody = document.getElementById('tabla-formulas');
+            tbody.innerHTML = '';
+            formulasCache.forEach(f => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${f.nombre}</td>
+                        <td>${f.bolas_por_bandeja}</td>
+                        <td>
+                            <button class="btn-sm" onclick="editarFormula('${f.id}')">Editar</button>
+                            <button class="btn-sm btn-danger" onclick="eliminarFormula('${f.id}')">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function abrirModalFormula() {
+            document.getElementById('modal-formula-titulo').innerText = 'Nueva Fórmula';
+            document.getElementById('formula-id').value = '';
+            document.getElementById('formula-nombre').value = '';
+            document.getElementById('formula-bolas').value = '';
+            document.getElementById('formula-bandejas').value = '';
+            document.getElementById('formula-ingredientes').innerHTML = '';
+            document.getElementById('formula-presentaciones').innerHTML = '';
+            agregarFilaIngrediente();
+            agregarFilaPresentacion();
+            document.getElementById('modal-formula').classList.add('active');
+        }
+
+        function editarFormula(id) {
+            const f = formulasCache.find(x => x.id === id);
+            if (!f) return;
+            document.getElementById('modal-formula-titulo').innerText = 'Editar Fórmula';
+            document.getElementById('formula-id').value = f.id;
+            document.getElementById('formula-nombre').value = f.nombre;
+            document.getElementById('formula-bolas').value = f.bolas_por_bandeja;
+            document.getElementById('formula-bandejas').value = f.bandejas_por_lote;
+            const divIng = document.getElementById('formula-ingredientes');
+            divIng.innerHTML = '';
+            f.ingredientes.forEach(ing => agregarFilaIngrediente(ing.id, ing.cantidad_necesaria));
+            const divPres = document.getElementById('formula-presentaciones');
+            divPres.innerHTML = '';
+            f.presentaciones.forEach(p => agregarFilaPresentacion(p.gramaje, p.bolas_por_paquete));
+            document.getElementById('modal-formula').classList.add('active');
+        }
+
+        function agregarFilaIngrediente(idInsumo = '', cantidad = '') {
+            const div = document.getElementById('formula-ingredientes');
+            const fila = document.createElement('div');
+            fila.className = 'fila-ingrediente';
+            fila.innerHTML = `
+                <select class="select-ingrediente">
+                    <option value="">Insumo</option>
+                    ${inventarioCache.map(i => `<option value="${i.id}" ${i.id === idInsumo ? 'selected' : ''}>${i.nombre} (${i.unidad})</option>`).join('')}
+                </select>
+                <input type="number" class="input-cantidad" placeholder="Cant." step="0.0001" value="${cantidad}">
+                <button class="btn-sm btn-danger" onclick="this.parentElement.remove()">×</button>
+            `;
+            div.appendChild(fila);
+        }
+
+        function agregarFilaPresentacion(gramaje = '', bolas = '') {
+            const div = document.getElementById('formula-presentaciones');
+            const fila = document.createElement('div');
+            fila.className = 'fila-presentacion';
+            fila.innerHTML = `
+                <input type="number" class="input-gramaje" placeholder="Gramos" value="${gramaje}">
+                <input type="number" class="input-bolas" placeholder="Bolas/paq" value="${bolas}">
+                <button class="btn-sm btn-danger" onclick="this.parentElement.remove()">×</button>
+            `;
+            div.appendChild(fila);
+        }
+
+        async function guardarFormula() {
+            const id = document.getElementById('formula-id').value || document.getElementById('formula-nombre').value.toLowerCase().replace(/ /g, '_') + '_' + Date.now();
+            const nombre = document.getElementById('formula-nombre').value;
+            const bolas = parseInt(document.getElementById('formula-bolas').value);
+            const bandejas = parseInt(document.getElementById('formula-bandejas').value);
+            const ingredientes = [];
+            document.querySelectorAll('#formula-ingredientes .fila-ingrediente').forEach(fila => {
+                const select = fila.querySelector('.select-ingrediente');
+                const cantidad = parseFloat(fila.querySelector('.input-cantidad').value);
+                if (select.value && !isNaN(cantidad) && cantidad > 0) {
+                    ingredientes.push({ id: select.value, cantidad_necesaria: cantidad });
+                }
+            });
+            const presentaciones = [];
+            document.querySelectorAll('#formula-presentaciones .fila-presentacion').forEach(fila => {
+                const gramaje = parseFloat(fila.querySelector('.input-gramaje').value);
+                const bolas = parseInt(fila.querySelector('.input-bolas').value);
+                if (!isNaN(gramaje) && gramaje > 0 && !isNaN(bolas) && bolas > 0) {
+                    presentaciones.push({ gramaje, bolas_por_paquete: bolas });
+                }
+            });
+            if (!nombre || !bolas || !bandejas || ingredientes.length === 0 || presentaciones.length === 0) {
+                alert('Complete todos los campos y al menos un ingrediente y una presentación.');
+                return;
+            }
+            const payload = { id, nombre, bolas_por_bandeja: bolas, bandejas_por_lote: bandejas, presentaciones, ingredientes };
+            const { error } = await supabaseClient.from('formulas').upsert(payload);
+            if (error) { alert('Error: ' + error.message); return; }
+            cerrarModal('modal-formula');
+            await cargarTodo();
+            cargarFormulas();
+        }
+
+        async function eliminarFormula(id) {
+            if (!confirm('¿Eliminar esta fórmula?')) return;
+            const { error } = await supabaseClient.from('formulas').delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            await cargarTodo();
+            cargarFormulas();
+        }
+
+        // ========== DEPARTAMENTOS ==========
+        function cargarDepartamentos() {
+            const tbody = document.getElementById('tabla-departamentos');
+            tbody.innerHTML = '';
+            departamentosCache.forEach(d => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${d.nombre}</td>
+                        <td>${d.slug}</td>
+                        <td>
+                            <button class="btn-sm" onclick="editarDepartamento('${d.id}')">Editar</button>
+                            <button class="btn-sm btn-danger" onclick="eliminarDepartamento('${d.id}')">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function abrirModalDepartamento() {
+            document.getElementById('modal-departamento-titulo').innerText = 'Agregar Departamento';
+            document.getElementById('departamento-id').value = '';
+            document.getElementById('departamento-nombre').value = '';
+            document.getElementById('departamento-slug').value = '';
+            document.getElementById('modal-departamento').classList.add('active');
+        }
+
+        function editarDepartamento(id) {
+            const d = departamentosCache.find(x => x.id === id);
+            if (!d) return;
+            document.getElementById('modal-departamento-titulo').innerText = 'Editar Departamento';
+            document.getElementById('departamento-id').value = d.id;
+            document.getElementById('departamento-nombre').value = d.nombre;
+            document.getElementById('departamento-slug').value = d.slug;
+            document.getElementById('modal-departamento').classList.add('active');
+        }
+
+        async function guardarDepartamento() {
+            const id = document.getElementById('departamento-id').value;
+            const nombre = document.getElementById('departamento-nombre').value;
+            const slug = document.getElementById('departamento-slug').value.toLowerCase().replace(/ /g, '-');
+            if (!nombre || !slug) { alert('Complete nombre y slug'); return; }
+            let payload;
+            if (id) {
+                payload = { id, nombre, slug };
+            } else {
+                payload = { nombre, slug };
+            }
+            const { error } = await supabaseClient.from('departamentos').upsert(payload);
+            if (error) { alert('Error: ' + error.message); return; }
+            cerrarModal('modal-departamento');
+            await cargarTodo();
+            cargarDepartamentos();
+        }
+
+        async function eliminarDepartamento(id) {
+            if (!confirm('¿Eliminar este departamento?')) return;
+            const { error } = await supabaseClient.from('departamentos').delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            await cargarTodo();
+            cargarDepartamentos();
+        }
+
+        // ========== PRODUCCIÓN ==========
+        function cargarProduccion() {
+            const selFormula = document.getElementById('prod-formula');
+            selFormula.innerHTML = '<option value="">-- Seleccione fórmula --</option>';
+            formulasCache.forEach(f => selFormula.innerHTML += `<option value="${f.id}">${f.nombre}</option>`);
+            const selDepto = document.getElementById('prod-departamento');
+            selDepto.innerHTML = '<option value="">-- Seleccione departamento --</option>';
+            departamentosCache.forEach(d => selDepto.innerHTML += `<option value="${d.id}">${d.nombre}</option>`);
+            document.getElementById('prod-resumen').style.display = 'none';
+            document.getElementById('prod-presentacion').innerHTML = '<option value="">-- Seleccione --</option>';
+        }
+
+        function actualizarResumenProd() {
+            const formulaId = document.getElementById('prod-formula').value;
+            const cantLotes = parseInt(document.getElementById('prod-cantidad-lotes').value) || 1;
+            const formula = formulasCache.find(f => f.id === formulaId);
+            const selPres = document.getElementById('prod-presentacion');
+            selPres.innerHTML = '<option value="">-- Seleccione --</option>';
+            if (!formula) { document.getElementById('prod-resumen').style.display = 'none'; return; }
+            formula.presentaciones.forEach((p, idx) => {
+                selPres.innerHTML += `<option value="${idx}">${p.gramaje}g (${p.bolas_por_paquete} bolas/paq)</option>`;
+            });
+            const totalBandejas = formula.bandejas_por_lote * cantLotes;
+            const totalBolas = formula.bolas_por_bandeja * totalBandejas;
+            const resumen = document.getElementById('prod-resumen');
+            resumen.style.display = 'block';
+            resumen.innerHTML = `<strong>Total bandejas:</strong> ${totalBandejas}<br><strong>Total bolas:</strong> ${totalBolas}`;
+        }
+
+        async function ejecutarProduccion() {
+            const formulaId = document.getElementById('prod-formula').value;
+            const cantLotes = parseInt(document.getElementById('prod-cantidad-lotes').value);
+            const deptoId = document.getElementById('prod-departamento').value;
+            const presIdx = document.getElementById('prod-presentacion').value;
+            if (!formulaId || !cantLotes || !deptoId || presIdx === '') {
+                alert('Seleccione fórmula, cantidad, departamento y presentación.');
+                return;
+            }
+            const formula = formulasCache.find(f => f.id === formulaId);
+            const presentacion = formula.presentaciones[parseInt(presIdx)];
+            const totalBandejas = formula.bandejas_por_lote * cantLotes;
+            const totalBolas = formula.bolas_por_bandeja * totalBandejas;
+            const maxPaquetes = Math.floor(totalBolas / presentacion.bolas_por_paquete);
+            if (maxPaquetes === 0) { alert('No alcanzan las bolas para un paquete.'); return; }
+
+            // Verificar stock
+            let faltantes = [];
+            for (let ing of formula.ingredientes) {
+                const necesario = ing.cantidad_necesaria * totalBandejas;
+                const item = inventarioCache.find(i => i.id === ing.id);
+                if (!item || item.cantidad < necesario) {
+                    faltantes.push({ nombre: item ? item.nombre : ing.id, falta: necesario - (item ? item.cantidad : 0), unidad: item ? item.unidad : '' });
+                }
+            }
+            if (faltantes.length > 0) {
+                let msg = 'Faltan insumos:\n';
+                faltantes.forEach(f => msg += `${f.nombre}: faltan ${f.falta.toFixed(2)} ${f.unidad}\n`);
+                alert(msg);
+                return;
+            }
+
+            // Descontar inventario
+            let costoTotal = 0;
+            let ingredientesUsados = [];
+            for (let ing of formula.ingredientes) {
+                const item = inventarioCache.find(i => i.id === ing.id);
+                const gasto = ing.cantidad_necesaria * totalBandejas;
+                const costo = gasto * item.costo_unitario;
+                costoTotal += costo;
+                item.cantidad -= gasto;
+                ingredientesUsados.push({ nombre: item.nombre, cantidad: gasto, unidad: item.unidad, costo });
+                await supabaseClient.from('inventario').update({ cantidad: item.cantidad }).eq('id', item.id);
+            }
+
+            // Crear lote
+            const loteId = 'L-' + String(lotesCache.length + 1).padStart(4, '0');
+            const nuevoLote = {
+                id: loteId,
+                producto: formula.nombre,
+                departamento_id: deptoId,
+                lotes_producidos: cantLotes,
+                total_bandejas: totalBandejas,
+                total_bolas: totalBolas,
+                paquetes_producidos: [{ gramaje: presentacion.gramaje, cantidad: maxPaquetes, bolas_por_paquete: presentacion.bolas_por_paquete }],
+                costo_lote: costoTotal,
+                estado: 'almacen1',
+                ingredientes_usados: ingredientesUsados,
+                latas: null
+            };
+            const { error } = await supabaseClient.from('lotes').insert(nuevoLote);
+            if (error) { alert('Error al guardar lote: ' + error.message); return; }
+
+            await cargarTodo();
+            alert('Producción registrada correctamente.');
+            cargarProduccion();
+            cargarLotes();
+        }
+
+        // ========== ALMACÉN / LOTES ==========
+        function cargarLotes() {
+            const tbody = document.getElementById('tabla-lotes');
+            tbody.innerHTML = '';
+            lotesCache.forEach(lote => {
+                const estadoBadge = lote.estado === 'almacen2' ? '<span class="badge badge-success">Empacado</span>' : '<span class="badge badge-warning">Almacén 1</span>';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${lote.id}</td>
+                        <td>${lote.producto}</td>
+                        <td>${estadoBadge}</td>
+                        <td>
+                            ${lote.estado === 'almacen1' ? `<button class="btn-sm btn-success" onclick="confirmarEmpaque('${lote.id}')">Confirmar</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function confirmarEmpaque(loteId) {
+            const { error } = await supabaseClient.from('lotes').update({ estado: 'almacen2' }).eq('id', loteId);
+            if (error) { alert('Error: ' + error.message); return; }
+            await cargarTodo();
+            cargarLotes();
+        }
+
+        // ========== UTILIDADES ==========
+        function cerrarModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // ========== INICIAR ==========
+        init();
+    </script>
+</body>
+</html>
