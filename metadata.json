@@ -1,0 +1,7 @@
+{
+  "name": "Almacén Pro",
+  "description": "Sistema de gestión y control de inventario, fórmulas, producción y almacén.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
